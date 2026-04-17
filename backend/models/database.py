@@ -2,7 +2,12 @@ from sqlalchemy import create_engine, Column, Integer, String, Text, Float, Date
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
+from pathlib import Path
 from backend.config import settings
+
+if settings.DATABASE_URL.startswith("sqlite:///"):
+    db_path = Path(settings.DATABASE_URL.replace("sqlite:///", "", 1))
+    db_path.parent.mkdir(parents=True, exist_ok=True)
 
 engine = create_engine(settings.DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

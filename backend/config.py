@@ -1,7 +1,11 @@
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 
 load_dotenv()
+
+BASE_DIR = Path(__file__).resolve().parent
+DEFAULT_DB_PATH = BASE_DIR / "data" / "playground.db"
 
 
 class Settings:
@@ -12,7 +16,7 @@ class Settings:
         self.LLM_PROVIDER = os.getenv("LLM_PROVIDER", "groq")  
 
         self.DATABASE_URL = os.getenv(
-            "DATABASE_URL", "sqlite:///./playground.db"
+            "DATABASE_URL", f"sqlite:///{DEFAULT_DB_PATH.as_posix()}"
         )
 
         self.CORS_ORIGINS = ["*"]
