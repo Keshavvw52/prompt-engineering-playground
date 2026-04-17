@@ -19,7 +19,7 @@ class Settings:
             "DATABASE_URL", f"sqlite:///{DEFAULT_DB_PATH.as_posix()}"
         )
 
-        self.CORS_ORIGINS = ["*"]
+        self.CORS_ORIGINS = ["http://localhost:5500"]
 
 
 settings = Settings()

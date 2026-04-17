@@ -1,4 +1,5 @@
 import time
+import asyncio
 from backend.config import settings
 
 
@@ -16,9 +17,15 @@ async def call_llm(
 
     try:
         if provider == "groq":
-            return _call_groq(
-                user_prompt, system_prompt, temperature, max_tokens, top_p, start
-            )
+            return await asyncio.to_thread(
+        _call_groq,
+        user_prompt,
+        system_prompt,
+        temperature,
+        max_tokens,
+        top_p,
+        start,
+    )
         else:
             return {"error": f"Unsupported provider: {provider}"}
 

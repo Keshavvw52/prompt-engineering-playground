@@ -1,6 +1,9 @@
 // api.js — all backend communication
 
-const API_BASE = 'http://localhost:8000/api';
+const API_BASE =
+  window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:8000/api'
+    : `${window.location.origin}/api`;
 
 async function apiFetch(path, options = {}) {
   const res = await fetch(API_BASE + path, {
@@ -25,8 +28,6 @@ const API = {
 
   sweep: (payload) =>
     apiFetch('/sweep', { method: 'POST', body: JSON.stringify(payload) }),
-
-  getTemplates: () => apiFetch('/templates'),
 
   getPrompts: () => apiFetch('/prompts'),
   savePrompt: (payload) =>

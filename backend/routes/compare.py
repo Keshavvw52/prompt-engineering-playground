@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
+
 from backend.models.database import get_db
 from backend.services.llm_service import call_llm
 from backend.services.prompt_service import apply_technique, resolve_variables
@@ -13,7 +14,7 @@ class PromptConfig(BaseModel):
     user_prompt: str
     system_prompt: str = ""
     technique: str = "zero-shot"
-    variables: dict = {}
+    variables: dict = Field(default_factory=dict)
     temperature: float = 0.7
     max_tokens: int = 1024
     top_p: float = 0.95
@@ -27,7 +28,10 @@ class CompareRequest(BaseModel):
 class SweepRequest(BaseModel):
     user_prompt: str
     system_prompt: str = ""
-    temperatures: list[float] = [0.2, 0.7, 1.2]
+    temperatures: list[float] = Field(
+        default_factory=lambda: [0.2, 0.7, 1.2],
+        max_length=5
+    )
     max_tokens: int = 512
 
 

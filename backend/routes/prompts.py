@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from typing import Optional
-from datetime import datetime
+from datetime import datetime, timezone
 from backend.models.database import get_db, SavedPrompt
 
 router = APIRouter()
@@ -26,7 +26,7 @@ class PromptUpdate(BaseModel):
 
 @router.post("/prompts")
 def save_prompt(req: PromptCreate, db: Session = Depends(get_db)):
-    prompt = SavedPrompt(**req.dict())
+    prompt = SavedPrompt(**req.model_dump())
     db.add(prompt)
     db.commit()
     db.refresh(prompt)
@@ -44,9 +44,9 @@ def update_prompt(prompt_id: int, req: PromptUpdate, db: Session = Depends(get_d
     prompt = db.query(SavedPrompt).filter(SavedPrompt.id == prompt_id).first()
     if not prompt:
         raise HTTPException(status_code=404, detail="Prompt not found")
-    for key, value in req.dict(exclude_none=True).items():
+    for key, value in req.model_dump(exclude_none=True).items():
         setattr(prompt, key, value)
-    prompt.updated_at = datetime.utcnow()
+    prompt.updated_at = datetime.now(timezone.utc)
     db.commit()
     db.refresh(prompt)
     return _to_dict(prompt)

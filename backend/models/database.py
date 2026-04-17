@@ -22,8 +22,9 @@ class SavedPrompt(Base):
     user_prompt = Column(Text, nullable=False)
     technique = Column(String(100), default="zero-shot")
     tags = Column(String(500), default="")
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc)
+)
 
 
 class HistoryEntry(Base):

@@ -1,5 +1,4 @@
 let _savedPrompts = [];
-let _templates = [];
 let _activeHistoryEntry = null;
 
 async function loadLibrary() {
@@ -213,69 +212,6 @@ async function deleteHistEntry(event, id) {
   } catch (err) {
     showNotification('error', '✗ Delete failed');
   }
-}
-
-// ===== TEMPLATES =====
-
-async function loadTemplates() {
-  try {
-    _templates = await API.getTemplates();
-    renderTemplateFilters();
-    renderTemplates('all');
-  } catch (err) {
-    console.error('Failed to load templates:', err);
-  }
-}
-
-function renderTemplateFilters() {
-  const filtersEl = document.getElementById('templates-filters');
-  const categories = ['all', ...new Set(_templates.map(t => t.category))];
-  filtersEl.innerHTML = categories.map(cat => `
-    <button class="filter-btn ${cat === 'all' ? 'active' : ''}" data-filter="${cat}">${cat}</button>
-  `).join('');
-  filtersEl.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      filtersEl.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      renderTemplates(btn.dataset.filter);
-    });
-  });
-}
-
-function renderTemplates(category) {
-  const grid = document.getElementById('templates-grid');
-  const filtered = category === 'all' ? _templates : _templates.filter(t => t.category === category);
-  if (!filtered.length) {
-    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="empty-state-icon">📋</div><div class="empty-state-title">No templates in this category</div></div>`;
-    return;
-  }
-  grid.innerHTML = filtered.map(t => `
-    <div class="template-card" onclick="loadTemplate('${t.id}')">
-      <div class="template-icon">${t.icon}</div>
-      <div class="template-name">${escapeHtml(t.name)}</div>
-      <div class="template-desc">${escapeHtml(t.user_prompt.substring(0, 100))}…</div>
-      <div class="prompt-card-meta">
-        <span class="tag tag-technique">${t.technique}</span>
-        <span class="tag tag-category">${t.category}</span>
-      </div>
-    </div>
-  `).join('');
-}
-
-function loadTemplate(id) {
-  const t = _templates.find(t => t.id === id);
-  if (!t) return;
-  document.getElementById('system-prompt').value = t.system_prompt || '';
-  document.getElementById('user-prompt').value = t.user_prompt || '';
-  document.querySelectorAll('.technique-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.technique === t.technique);
-  });
-  setActiveTabResult(null);
-  restoreTabOutput(getActiveTab());
-  updateTokenCounter();
-  renderVariablesFromPrompt();
-  navigateTo('playground');
-  showNotification('success', `✓ Template loaded: ${t.name}`);
 }
 
 // ===== HELPERS =====

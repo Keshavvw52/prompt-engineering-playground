@@ -6,7 +6,7 @@ import os
 
 from backend.config import settings
 from backend.models.database import init_db
-from backend.routes import generate, compare, prompts, history, templates
+from backend.routes import generate, compare, prompts, history
 
 app = FastAPI(title="Prompt Engineering Playground", version="1.0.0")
 
@@ -26,7 +26,6 @@ app.include_router(generate.router, prefix="/api")
 app.include_router(compare.router, prefix="/api")
 app.include_router(prompts.router, prefix="/api")
 app.include_router(history.router, prefix="/api")
-app.include_router(templates.router, prefix="/api")
 
 
 @app.get("/api/health")
