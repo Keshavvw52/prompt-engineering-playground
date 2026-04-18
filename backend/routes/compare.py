@@ -2,9 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
-from backend.models.database import get_db
-from backend.services.llm_service import call_llm
-from backend.services.prompt_service import apply_technique, resolve_variables
+from models.database import get_db
+from services.llm_service import call_llm
+from services.prompt_service import apply_technique, resolve_variables
 import asyncio
 
 router = APIRouter()

@@ -1,6 +1,6 @@
 import time
 import asyncio
-from backend.config import settings
+from config import settings
 
 
 async def call_llm(

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from backend.models.database import get_db, HistoryEntry
+from models.database import get_db, HistoryEntry
 
 router = APIRouter()
 

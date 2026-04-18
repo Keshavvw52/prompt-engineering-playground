@@ -2,11 +2,11 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from backend.models.database import get_db, HistoryEntry
-from backend.services.llm_service import call_llm
-from backend.services.prompt_service import apply_technique, resolve_variables
-from backend.services.output_parser import parse_output
-from backend.services.token_counter import count_tokens_approx
+from models.database import get_db, HistoryEntry
+from services.llm_service import call_llm
+from services.prompt_service import apply_technique, resolve_variables
+from services.output_parser import parse_output
+from services.token_counter import count_tokens_approx
 
 router = APIRouter()
 

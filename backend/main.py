@@ -1,18 +1,19 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
 import os
 
-from backend.config import settings
-from backend.models.database import init_db
-from backend.routes import generate, compare, prompts, history
+from config import settings
+from models.database import init_db
+from routes import generate, compare, prompts, history
+
 
 app = FastAPI(title="Prompt Engineering Playground", version="1.0.0")
 
+# CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.CORS_ORIGINS,
+    allow_origins=["*"],  # change later after deploy
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -33,13 +34,12 @@ def health():
     return {"status": "ok", "provider": settings.LLM_PROVIDER}
 
 
-# Serve frontend static files
-frontend_path = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "..", "frontend")
-)
-if os.path.exists(frontend_path):
-    app.mount("/static", StaticFiles(directory=frontend_path), name="static")
+# ===== SERVE FRONTEND (IMPORTANT) =====
 
-    @app.get("/")
-    def serve_frontend():
-        return FileResponse(os.path.join(frontend_path, "index.html"))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+frontend_path = os.path.join(BASE_DIR, "frontend")
+
+print("FRONTEND PATH:", frontend_path)
+print("EXISTS:", os.path.exists(frontend_path))
+
+app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")
