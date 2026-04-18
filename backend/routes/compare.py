@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
 from sqlalchemy.orm import Session
 
 from backend.models.database import get_db
@@ -25,14 +25,20 @@ class CompareRequest(BaseModel):
     prompt_b: PromptConfig
 
 
+
 class SweepRequest(BaseModel):
     user_prompt: str
     system_prompt: str = ""
     temperatures: list[float] = Field(
-        default_factory=lambda: [0.2, 0.7, 1.2],
-        max_length=5
+        default_factory=lambda: [0.2, 0.7, 1.2]
     )
     max_tokens: int = 512
+
+    @validator("temperatures")
+    def validate_temperatures(cls, v):
+        if len(v) > 5:
+            raise ValueError("Maximum 5 temperature values allowed")
+        return v
 
 
 @router.post("/compare")
