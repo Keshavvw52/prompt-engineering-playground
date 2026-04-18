@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" href="data:,">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prompt Engineering Playground</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/components.css" />
+</head>
+<body>
+
+<div class="bg-layer"></div>
+<div class="bg-grid"></div>
+
+<div id="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+       <div>
+          <div class="logo-text">PromptLab</div>
+          <div class="logo-sub">v1.0 · Playground</div>
+        </div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+       <div class="nav-item" data-page="home">
+        <span class="nav-icon"></span> Home
+      </div>
+
+      <div class="nav-section">Workspace</div>
+      <div class="nav-item active" data-page="playground">
+         Playground
+      </div>
+      <div class="nav-item" data-page="compare">
+         Compare
+      </div>
+
+      <div class="nav-section">Storage</div>
+      <div class="nav-item" data-page="library">
+         Library
+        <span class="nav-badge" id="library-count">0</span>
+      </div>
+      <div class="nav-item" data-page="history">
+         History
+        <span class="nav-badge" id="history-count">0</span>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="api-status">
+        <div class="status-dot" id="api-status-dot"></div>
+        <span class="status-text" id="api-status-text">Connecting…</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN AREA -->
+  <div class="main-area">
+ 
+       <!-- ====== PAGE: HOME ====== -->
+        <div class="page active" id="page-home">
+      <div class="home-wrap">
+        <div class="home-orb home-orb-1"></div>
+        <div class="home-orb home-orb-2"></div>
+        <div class="home-orb home-orb-3"></div>
+        <div class="home-hero">
+          <div class="home-eyebrow">
+            <span class="home-eyebrow-dot"></span>
+            <span>Open-source · Fully local · LLM-agnostic</span>
+          </div>
+          <h1 class="home-title">Prompt Engineering<br/><span class="home-title-accent">Playground</span></h1>
+          <p class="home-subtitle">Experiment with prompts, compare AI outputs, and fine-tune<br/>LLM behavior in real time — all in one developer-grade workspace.</p>
+          <div class="home-cta-row">
+            <button class="btn home-cta-primary" onclick="navigateTo('playground')">
+              <span>Start Exploring</span>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            
+          </div>
+          <div class="home-pills">
+            <div class="home-pill">Zero-Shot</div>
+            <div class="home-pill">Few-Shot</div>
+            <div class="home-pill">Chain-of-Thought</div>
+            <div class="home-pill">Role-Based</div>
+            <div class="home-pill">Compare</div>
+            <div class="home-pill">Output Parsing</div>
+          </div>
+        </div>
+        <div class="home-features">
+          <div class="home-feature-card" onclick="navigateTo('playground')">
+            <div class="home-feature-icon" style="background:linear-gradient(135deg,rgba(59,130,246,0.2),rgba(59,130,246,0.05));border-color:rgba(59,130,246,0.3);"></div>
+            <div class="home-feature-title">Live Playground</div>
+            <div class="home-feature-desc">Write, tweak, and run prompts instantly with full parameter control.</div>
+            <div class="home-feature-arrow">→</div>
+          </div>
+          <div class="home-feature-card" onclick="navigateTo('compare')">
+            <div class="home-feature-icon" style="background:linear-gradient(135deg,rgba(6,182,212,0.2),rgba(6,182,212,0.05));border-color:rgba(6,182,212,0.3);"></div>
+            <div class="home-feature-title">Compare Prompts</div>
+            <div class="home-feature-desc">Run two prompts side-by-side and see exactly how wording changes output.</div>
+            <div class="home-feature-arrow">→</div>
+          </div>
+       
+          <div class="home-feature-card" onclick="navigateTo('library')">
+            <div class="home-feature-icon" style="background:linear-gradient(135deg,rgba(16,185,129,0.2),rgba(16,185,129,0.05));border-color:rgba(16,185,129,0.3);"></div>
+            <div class="home-feature-title">Prompt Library</div>
+            <div class="home-feature-desc">Save your best prompts and reload them instantly any time.</div>
+            <div class="home-feature-arrow">→</div>
+          </div>
+        </div>
+        <div class="home-stat-strip">
+          <div class="home-stat"><span class="home-stat-value">6</span><span class="home-stat-label">Techniques</span></div>
+          <div class="home-stat-divider"></div>
+          
+          <div class="home-stat-divider"></div>
+          <div class="home-stat"><span class="home-stat-value">1</span><span class="home-stat-label">LLM Providers</span></div>
+          <div class="home-stat-divider"></div>
+          <div class="home-stat"><span class="home-stat-value">∞</span><span class="home-stat-label">Experiments</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== PAGE: PLAYGROUND ====== -->
+    <div class="page active" id="page-playground">
+      <div class="center-panel">
+
+        <!-- Topbar -->
+        <div class="topbar">
+          <span class="topbar-title">Prompt Playground</span>
+          <div class="topbar-actions">
+            <button class="btn btn-secondary btn-ghost" id="btn-clear">↺ Clear</button>
+            <button class="btn btn-secondary" id="btn-save-open"> Save Prompt</button>
+            <button class="btn btn-primary btn-run" id="btn-run" type="button">
+              <div class="spinner"></div>
+              <span class="btn-run-text"> Run Prompt</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs-bar" id="tabs-bar">
+          <div class="tab active" data-tab="0">
+            <span>Prompt 1</span>
+            <span class="tab-close" onclick="closeTab(event,0)">✕</span>
+          </div>
+          <div class="tab-add" id="tab-add" title="New prompt tab">＋</div>
+        </div>
+
+        <!-- Progress bar -->
+        <div class="progress-bar" id="progress-bar">
+          <div class="progress-bar-fill" id="progress-fill"></div>
+        </div>
+
+        <!-- Scroll area -->
+        <div class="scroll-area" id="playground-scroll">
+
+          <!-- System Prompt -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <span class="card-title-dot"></span> System Prompt
+              </div>
+              <div style="display:flex;gap:6px;">
+                <button class="btn btn-ghost" id="btn-clear-system">Clear</button>
+              </div>
+            </div>
+            <div class="card-body">
+              <textarea id="system-prompt" placeholder="You are a helpful assistant. Define the AI's role, personality, and constraints here…"></textarea>
+            </div>
+          </div>
+
+          <!-- Technique Selector -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><span class="card-title-dot"></span> Prompting Technique</div>
+            </div>
+            <div class="technique-grid" id="technique-grid">
+              <button class="technique-btn active" data-technique="zero-shot">
+                Zero-Shot
+              </button>
+              <button class="technique-btn" data-technique="few-shot">
+                Few-Shot
+              </button>
+              <button class="technique-btn" data-technique="chain-of-thought">
+               Chain-of-Thought
+              </button>
+              <button class="technique-btn" data-technique="role-based">
+                Role-Based
+              </button>
+              <button class="technique-btn" data-technique="output-format">
+               Output Format
+              </button>
+              <button class="technique-btn" data-technique="react">
+                ReAct
+              </button>
+            </div>
+          </div>
+
+          <!-- User Prompt -->
+          <div class="card" id="prompt-card">
+            <div class="card-header">
+              <div class="card-title"><span class="card-title-dot"></span> User Prompt</div>
+              <div style="display:flex;gap:6px;align-items:center;">
+                <span class="parse-badge parse-text" id="output-type-badge">text</span>
+                <select id="parse-type" style="width:auto;padding:4px 8px;font-size:11px;">
+                  <option value="auto">Auto-parse</option>
+                  <option value="json">Expect JSON</option>
+                  <option value="code">Expect Code</option>
+                  <option value="list">Expect List</option>
+                  <option value="text">Plain Text</option>
+                </select>
+              </div>
+            </div>
+            <div class="card-body">
+              <textarea id="user-prompt" placeholder="Write your prompt here… Use {{variable}} for dynamic values."></textarea>
+            </div>
+            <div class="prompt-toolbar">
+              <div class="token-count">
+                <span>⬡</span> Tokens: <span id="token-display">0</span>
+                &nbsp;|&nbsp; Chars: <span id="char-display">0</span>
+              </div>
+              <div style="display:flex;gap:6px;">
+                <button class="btn btn-ghost" id="btn-detect-vars" data-tooltip="Detect {{variables}}">🔍 Variables</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Variables (hidden by default) -->
+          <div class="card" id="variables-card" style="display:none;">
+            <div class="card-header">
+              <div class="card-title"><span class="card-title-dot"></span> Variables</div>
+              <button class="btn btn-ghost" onclick="document.getElementById('variables-card').style.display='none'">✕</button>
+            </div>
+            <div class="card-body">
+              <div class="variables-section" id="variables-section"></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Output Panel -->
+        <div class="output-panel" id="output-panel">
+          <div class="output-header">
+            <div class="output-tabs">
+              <div class="output-tab active" data-output-tab="raw">Raw</div>
+              <div class="output-tab" data-output-tab="parsed">Parsed</div>
+              <div class="output-tab" data-output-tab="markdown">Rendered</div>
+            </div>
+            <div class="output-meta" id="output-meta"></div>
+          </div>
+          <div class="output-body" id="output-body">
+            <div class="output-empty">
+              <div class="empty-icon">◎</div>
+              <div>Run a prompt to see output</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- PARAMS PANEL -->
+      <div class="params-panel">
+        <div class="params-header">⚙ Parameters</div>
+
+        <div class="param-group">
+          <div class="param-label">
+            <span class="param-name">Temperature</span>
+            <span class="param-value" id="val-temperature">0.70</span>
+          </div>
+          <input type="range" id="param-temperature" min="0" max="2" step="0.01" value="0.70" />
+          <div class="param-desc">Controls randomness. 0 = deterministic, 2 = very creative.</div>
+        </div>
+
+        <div class="param-group">
+          <div class="param-label">
+            <span class="param-name">Max Tokens</span>
+            <span class="param-value" id="val-max-tokens">1024</span>
+          </div>
+          <input type="range" id="param-max-tokens" min="64" max="4096" step="64" value="1024" />
+          <div class="param-desc">Maximum response length in tokens.</div>
+        </div>
+
+        <div class="param-group">
+          <div class="param-label">
+            <span class="param-name">Top-P</span>
+            <span class="param-value" id="val-top-p">0.95</span>
+          </div>
+          <input type="range" id="param-top-p" min="0" max="1" step="0.01" value="0.95" />
+          <div class="param-desc">Nucleus sampling threshold.</div>
+        </div>
+
+        <div class="param-group">
+          <div class="param-label">
+            <span class="param-name">Freq. Penalty</span>
+            <span class="param-value" id="val-freq-penalty">0.00</span>
+          </div>
+          <input type="range" id="param-freq-penalty" min="-2" max="2" step="0.01" value="0" />
+          <div class="param-desc">Penalizes repeated tokens.</div>
+        </div>
+
+        <div class="param-group">
+          <div class="param-label">
+            <span class="param-name">Pres. Penalty</span>
+            <span class="param-value" id="val-pres-penalty">0.00</span>
+          </div>
+          <input type="range" id="param-pres-penalty" min="-2" max="2" step="0.01" value="0" />
+          <div class="param-desc">Encourages new topics.</div>
+        </div>
+
+        <div class="param-group" style="border-bottom:none;">
+          <div class="param-label">
+            <span class="param-name">Quick Presets</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:5px;">
+            <button class="btn btn-secondary" style="font-size:11px;justify-content:flex-start;" onclick="applyPreset('precise')"> Precise (T=0.2)</button>
+            <button class="btn btn-secondary" style="font-size:11px;justify-content:flex-start;" onclick="applyPreset('balanced')"> Balanced (T=0.7)</button>
+            <button class="btn btn-secondary" style="font-size:11px;justify-content:flex-start;" onclick="applyPreset('creative')"> Creative (T=1.2)</button>
+            <button class="btn btn-secondary" style="font-size:11px;justify-content:flex-start;" onclick="applyPreset('code')"> Code (T=0.3)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== PAGE: COMPARE ====== -->
+    <div class="page" id="page-compare">
+      <div style="display:flex;flex-direction:column;flex:1;overflow:hidden;">
+        <div class="topbar">
+          <span class="topbar-title"> Side-by-Side Compare</span>
+          <div class="topbar-actions">
+            <button class="btn btn-primary btn-run" id="btn-compare-run" onclick="runComparison()">
+              <div class="spinner"></div>
+              <span class="btn-run-text"> Compare Both</span>
+            </button>
+          </div>
+        </div>
+        <div class="progress-bar" id="compare-progress">
+          <div class="progress-bar-fill" id="compare-progress-fill"></div>
+        </div>
+        <div class="compare-grid">
+          <div class="compare-col">
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title"><span class="card-title-dot" style="background:var(--accent-blue)"></span> Prompt A</div>
+              </div>
+              <div class="card-body" style="display:flex;flex-direction:column;gap:8px;">
+                <textarea id="cmp-system-a" placeholder="System prompt A…" style="height:60px;"></textarea>
+                <textarea id="cmp-prompt-a" placeholder="User prompt A…" style="height:120px;"></textarea>
+                <div style="display:flex;gap:8px;">
+                  <div style="flex:1;">
+                    <label>Technique</label>
+                    <select id="cmp-technique-a">
+                      <option value="zero-shot">Zero-Shot</option>
+                      <option value="few-shot">Few-Shot</option>
+                      <option value="chain-of-thought">Chain-of-Thought</option>
+                      <option value="role-based">Role-Based</option>
+                    </select>
+                  </div>
+                  <div style="flex:1;">
+                    <label>Temperature</label>
+                    <input type="number" id="cmp-temp-a" value="0.7" min="0" max="2" step="0.1" style="height:36px;" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card" id="cmp-output-a-card">
+              <div class="card-header">
+                <div class="card-title"><span class="card-title-dot" style="background:var(--accent-blue)"></span> Output A</div>
+                <span class="meta-chip" id="cmp-meta-a"></span>
+              </div>
+              <div class="card-body">
+                <div class="output-content" id="cmp-output-a" style="min-height:80px;">
+                  <div class="output-empty"><div class="empty-icon">◎</div><div>Output A appears here</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="compare-col">
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title"><span class="card-title-dot" style="background:var(--accent-cyan)"></span> Prompt B</div>
+              </div>
+              <div class="card-body" style="display:flex;flex-direction:column;gap:8px;">
+                <textarea id="cmp-system-b" placeholder="System prompt B…" style="height:60px;"></textarea>
+                <textarea id="cmp-prompt-b" placeholder="User prompt B…" style="height:120px;"></textarea>
+                <div style="display:flex;gap:8px;">
+                  <div style="flex:1;">
+                    <label>Technique</label>
+                    <select id="cmp-technique-b">
+                      <option value="zero-shot">Zero-Shot</option>
+                      <option value="few-shot">Few-Shot</option>
+                      <option value="chain-of-thought">Chain-of-Thought</option>
+                      <option value="role-based">Role-Based</option>
+                    </select>
+                  </div>
+                  <div style="flex:1;">
+                    <label>Temperature</label>
+                    <input type="number" id="cmp-temp-b" value="0.7" min="0" max="2" step="0.1" style="height:36px;" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card" id="cmp-output-b-card">
+              <div class="card-header">
+                <div class="card-title"><span class="card-title-dot" style="background:var(--accent-cyan)"></span> Output B</div>
+                <span class="meta-chip" id="cmp-meta-b"></span>
+              </div>
+              <div class="card-body">
+                <div class="output-content" id="cmp-output-b" style="min-height:80px;">
+                  <div class="output-empty"><div class="empty-icon">◎</div><div>Output B appears here</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== PAGE: LIBRARY ====== -->
+    <div class="page" id="page-library">
+      <div style="display:flex;flex-direction:column;flex:1;overflow:hidden;">
+        <div class="topbar">
+          <span class="topbar-title"> Saved Prompts</span>
+          <div class="topbar-actions">
+            <input type="text" id="library-search" placeholder="Search prompts…" style="width:200px;height:32px;padding:4px 10px;" />
+          </div>
+        </div>
+        <div class="library-grid" id="library-grid">
+          <div class="empty-state" style="grid-column:1/-1;">
+            <div class="empty-state-icon"></div>
+            <div class="empty-state-title">No saved prompts</div>
+            <div class="empty-state-text">Save prompts from the Playground to find them here.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== PAGE: HISTORY ====== -->
+    <div class="page" id="page-history">
+      <div style="display:flex;flex-direction:column;flex:1;overflow:hidden;">
+        <div class="topbar">
+          <span class="topbar-title">Execution History</span>
+          <div class="topbar-actions">
+            <button class="btn btn-secondary" id="btn-clear-history">🗑 Clear History</button>
+          </div>
+        </div>
+        <div class="history-wrap">
+          <table id="history-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Prompt</th>
+                <th>Technique</th>
+                <th>Model</th>
+                <th>Temp</th>
+                <th>In Tokens</th>
+                <th>Out Tokens</th>
+                <th>Latency</th>
+                <th>Time</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="history-tbody">
+              <tr><td colspan="10" style="text-align:center;color:var(--text-muted);padding:40px;">No history yet. Run some prompts!</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end main-area -->
+</div><!-- end app -->
+
+<!-- SAVE MODAL -->
+<div class="modal-overlay" id="save-modal">
+  <div class="modal">
+    <div class="modal-title"> Save Prompt</div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div>
+        <label>Prompt Name *</label>
+        <input type="text" id="save-name" placeholder="My awesome prompt…" />
+      </div>
+      <div>
+        <label>Tags (comma-separated)</label>
+        <input type="text" id="save-tags" placeholder="blog, marketing, gpt…" />
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeSaveModal()">Cancel</button>
+      <button class="btn btn-primary" id="btn-confirm-save">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- HISTORY DETAIL MODAL -->
+<div class="modal-overlay" id="history-modal">
+  <div class="modal" style="width:560px;max-height:80vh;overflow-y:auto;">
+    <div class="modal-title" id="history-modal-title">History Entry</div>
+    <div class="history-detail" id="history-modal-body"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeHistoryModal()">Close</button>
+      <button class="btn btn-primary" id="btn-load-history">Load into Playground</button>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIFICATION -->
+<div class="notification" id="notification">
+  <span class="notification-icon" id="notif-icon">✓</span>
+  <span id="notif-text">Saved!</span>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/editor.js"></script>
+<script src="js/output-parser.js"></script>
+<script src="js/comparision.js"></script>
+<script src="js/library.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>  
