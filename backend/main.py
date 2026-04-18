@@ -31,7 +31,12 @@ app.include_router(history.router, prefix="/api")
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "provider": settings.LLM_PROVIDER}
+    return {
+        "status": "ok",
+        "provider": settings.LLM_PROVIDER,
+        "llm_transport": "direct-http",
+        "release_date": "2026-04-18",
+    }
 
 
 # ===== SERVE FRONTEND (IMPORTANT) =====
