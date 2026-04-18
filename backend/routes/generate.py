@@ -43,7 +43,10 @@ async def generate(req: GenerateRequest, db: Session = Depends(get_db)):
         )
 
         if "error" in result:
-            raise HTTPException(status_code=400, detail=result["error"])
+            raise HTTPException(
+                status_code=result.get("status_code", 400),
+                detail=result["error"],
+            )
 
         parsed = parse_output(result["output"], req.parse_output_type)
 
