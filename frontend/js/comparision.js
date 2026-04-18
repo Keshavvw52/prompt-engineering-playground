@@ -78,7 +78,7 @@ function renderCompareOutput(side, result) {
   metaEl.innerHTML = `
     <span style="font-size:10px;color:var(--text-muted);">${result.model} · ⏱ ${result.latency_ms}ms · ${result.output_tokens} tokens</span>
   `;
-}
+
 
 function initComparison() {
   const compareButton = document.getElementById('btn-compare-run');
