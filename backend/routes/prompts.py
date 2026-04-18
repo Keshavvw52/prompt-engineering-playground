@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from typing import Optional
 from datetime import datetime, timezone
-from backend.models.database import get_db, SavedPrompt
+from models.database import get_db, SavedPrompt
 
 router = APIRouter()
 

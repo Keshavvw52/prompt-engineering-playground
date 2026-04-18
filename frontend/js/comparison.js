@@ -17,8 +17,8 @@ async function runComparison() {
   progressBar.classList.add('indeterminate');
 
   // Clear previous outputs
-  document.getElementById('cmp-output-a').innerHTML = '<div class="output-empty"><div class="empty-icon" style="animation:spin 1s linear infinite">⟳</div><div>Generating…</div></div>';
-  document.getElementById('cmp-output-b').innerHTML = '<div class="output-empty"><div class="empty-icon" style="animation:spin 1s linear infinite">⟳</div><div>Generating…</div></div>';
+  document.getElementById('cmp-output-a').innerHTML = 'Generating...';
+  document.getElementById('cmp-output-b').innerHTML = 'Generating...';
   document.getElementById('cmp-meta-a').innerHTML = '';
   document.getElementById('cmp-meta-b').innerHTML = '';
 
@@ -45,8 +45,10 @@ async function runComparison() {
     };
 
     const data = await API.compare(payload);
+
     renderCompareOutput('a', data.result_a);
     renderCompareOutput('b', data.result_b);
+
   } catch (err) {
     document.getElementById('cmp-output-a').textContent = 'Error: ' + err.message;
     document.getElementById('cmp-output-b').textContent = 'Error: ' + err.message;
@@ -58,34 +60,40 @@ async function runComparison() {
   }
 }
 
+
 function renderCompareOutput(side, result) {
   const outputEl = document.getElementById(`cmp-output-${side}`);
   const metaEl = document.getElementById(`cmp-meta-${side}`);
 
   if (!result) {
-    outputEl.innerHTML = `<div class="output-empty"><div class="empty-icon">◎</div><div>No result returned</div></div>`;
+    outputEl.innerHTML = 'No result returned';
     metaEl.innerHTML = '';
     return;
   }
 
   if (result.error) {
-    outputEl.innerHTML = `<div class="output-content" style="color:var(--accent-red);">${escapeHtml(result.error)}</div>`;
-    metaEl.innerHTML = `<span style="font-size:10px;color:var(--accent-red);">Request failed</span>`;
+    outputEl.innerHTML = result.error;
+    metaEl.innerHTML = 'Request failed';
     return;
   }
 
-  outputEl.innerHTML = `<div class="output-content">${simpleMarkdown(result.output)}</div>`;
-  metaEl.innerHTML = `
-    <span style="font-size:10px;color:var(--text-muted);">${result.model} · ⏱ ${result.latency_ms}ms · ${result.output_tokens} tokens</span>
-  `;
+  outputEl.innerHTML = simpleMarkdown(result.output);
+  metaEl.innerHTML = `${result.model} · ${result.latency_ms}ms · ${result.output_tokens} tokens`;
+}
 
 
+// ✅ FIXED — now properly outside
 function initComparison() {
   const compareButton = document.getElementById('btn-compare-run');
-  if (!compareButton || compareButton.dataset.bound === 'true' || compareButton.getAttribute('onclick')) return;
+  if (!compareButton) return;
+
+  if (compareButton.dataset.bound === 'true') return;
+
   compareButton.addEventListener('click', runComparison);
   compareButton.dataset.bound = 'true';
 }
 
-window.runCompare = runComparison;
+
+// ✅ make globally accessible
 window.runComparison = runComparison;
+window.initComparison = initComparison;
