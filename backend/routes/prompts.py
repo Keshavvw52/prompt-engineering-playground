@@ -26,7 +26,7 @@ class PromptUpdate(BaseModel):
 
 @router.post("/prompts")
 def save_prompt(req: PromptCreate, db: Session = Depends(get_db)):
-    prompt = SavedPrompt(**req.model_dump())
+    prompt = SavedPrompt(**req.dict())
     db.add(prompt)
     db.commit()
     db.refresh(prompt)
