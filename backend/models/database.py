@@ -1,9 +1,9 @@
 from sqlalchemy import create_engine, Column, Integer, String, Text, Float, DateTime, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
-from config import settings
+from backend.config import settings
 
 if settings.DATABASE_URL.startswith("sqlite:///"):
     db_path = Path(settings.DATABASE_URL.replace("sqlite:///", "", 1))

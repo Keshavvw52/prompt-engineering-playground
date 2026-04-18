@@ -3,9 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import os
 
-from config import settings
-from models.database import init_db
-from routes import generate, compare, prompts, history
+from backend.config import settings
+from backend.models.database import init_db
+from backend.routes import generate, compare, prompts, history
 
 
 app = FastAPI(title="Prompt Engineering Playground", version="1.0.0")
