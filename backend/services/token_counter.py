@@ -6,3 +6,7 @@ def count_tokens(text: str) -> int:
     if not text:
         return 0
     return max(1, len(text) // 4)
+
+
+def count_tokens_approx(text: str) -> int:
+    return count_tokens(text)
